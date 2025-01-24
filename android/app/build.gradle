@@ -1,0 +1,96 @@
+plugins {
+    id "com.android.application"
+    // START: FlutterFire Configuration
+    id 'com.google.gms.google-services'
+    // END: FlutterFire Configuration
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+android {
+    namespace "com.example.spt_app"
+    compileSdk 34  // Establecer la versión de SDK de compilación (puedes usar la más reciente)
+
+    ndkVersion flutter.ndkVersion  // Si usas NDK, puedes mantener este valor igual
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        // Tu Application ID único
+        applicationId "com.example.spt_app"
+
+        // Configurar las versiones de SDK mínimas y objetivo
+        minSdkVersion 24  // Puedes mantener esta versión, que es una buena base para compatibilidad
+        targetSdkVersion 34  // Establecer la versión objetivo de SDK más reciente
+
+        versionCode 1  // Valor predeterminado o puedes personalizar
+        versionName "1.0"
+
+        multiDexEnabled true
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.debug  // Puedes ajustar esto más adelante para firmas reales
+        }
+    }
+}
+
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22'
+    
+    // Excluir versiones conflictivas
+    implementation ('org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22') {
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
+    }
+    implementation ('org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22') {
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
+    }
+
+    implementation 'androidx.multidex:multidex:2.0.1'
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group == 'org.jetbrains.kotlin') {
+            details.useVersion '1.8.22'
+        }
+    }
+}
+
+
+
